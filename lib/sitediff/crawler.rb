@@ -79,7 +79,9 @@ class SiteDiff
       return unless depth >= 1
 
       # Find links
-      links = find_links(doc)
+      aHrefLinks = find_aHrefLinks(doc)
+      srcLinks = find_srcLinks(doc)
+      links = aHrefLinks + srcLinks
       uris = links.map { |l| resolve_link(base, l) }.compact
       uris = filter_links(uris)
 
@@ -108,8 +110,12 @@ class SiteDiff
     end
 
     # Return a list of string links found on a page.
-    def find_links(doc)
+    def find_aHrefLinks(doc)
       doc.xpath('//a[@href]').map { |e| e['href'] }
+    end
+
+    def find_srcLinks(doc)
+      doc.xpath('//frame[@src]').map { |e| e['src'] }
     end
 
     # Filter out links we don't want. Links passed in are absolute URIs.
